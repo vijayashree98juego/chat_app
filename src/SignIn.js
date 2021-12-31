@@ -1,10 +1,19 @@
 import React, { Component } from 'react';
 import './SignIn.css'
 import ChatList from './ChatList';
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Link,Redirect ,
+    useNavigate,
+    Navigate
+
+  } from "react-router-dom";
 
 class SignIn extends Component {
     constructor(props) {
-        super(props);
+        super(props)
         this.state={
             username:'',
             password:'',
@@ -37,7 +46,7 @@ class SignIn extends Component {
         })
     }
 
-    onSubmitHandler(){     
+    onSubmitHandler(){ 
         let username=this.state.username;
         let password=this.state.password;
         let errors = {}
@@ -49,7 +58,7 @@ class SignIn extends Component {
       }
  
     if(Object.entries(errors).length===0){
-        console.log("processing submit operation....")
+        const { history } = this.props;
         const data = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -59,9 +68,14 @@ class SignIn extends Component {
         fetch('https://api-us.juegogames.com/NOMOS-V3/users/sign_in',data)
         .then(response => response.json())
         .then(data => {
-            if(data.responseCode===200){
-                console.log("success");
-                console.log(data.responseData)
+            if(data.responseCode===200){ 
+                console.log(this.props.setStateChange)
+                this.props.setStateChange(data.responseData.access_token)
+                this.setState({
+                    access_token:data.responseData.access_token,
+                    redirect:true
+                })
+                // window.location.href='/chat';
             }else{
                 alert("Incorrect username or password")
             }
@@ -104,6 +118,7 @@ class SignIn extends Component {
                 <input type="submit" value="Sing In" onClick={this.onSubmitHandler} />
             </div> 
             </div>
+            {this.state.redirect&&<Navigate to='/chat'/>}
             </div>
         );
     }

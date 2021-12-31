@@ -1,0 +1,11 @@
+.profile {
+    width: 250px;
+    background-color: #F5F5F5;
+    list-style-type: none;
+    padding: 0;
+}
+.user-name {
+    width: 100%;
+    background-color: #abb230;
+    height: 100%;
+}

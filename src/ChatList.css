@@ -1,0 +1,93 @@
+.header-content{
+    margin-left: 5%;
+    color: green;
+    text-align: left;
+    font-weight: bolder;
+    display: inline;
+    /* display:inline-block; */
+    /* float: left; */
+    /* background-color: lightgrey; */
+}
+.sub-header{
+    margin-left: 5%;
+    color: black;
+    font-weight: lighter;
+}
+h2::after
+{
+  content: '';
+  border-bottom: 1px;
+  display: block;
+ 
+}
+.header{
+    background-color: lightgrey;
+}
+
+.searchButton {
+    /* display: inline-block; */
+    margin-top: 00.5%;
+    margin-right: 0.5%;
+    width: 40px;
+    height: 30px;
+    border: 1px solid #00b4cc;
+    background: #00b4cc;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    font-size: 10px;  
+    float: right;
+   display: inline;
+   margin-right: 10px;
+ 
+   
+}
+ /* tr::after{
+    content: '';
+    border-bottom: 1px solid black;
+    display: block; 
+} */
+/* .chat-list {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+.chat-list td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-collapse: collapse;
+  }
+   */
+/* 
+   td {
+       width: 100%;
+       border-bottom:1pt solid black;
+  } */
+  
+  /* table {
+    width: 100%;
+    /* border-collapse: collapse; */
+  /* }  */
+
+  /* tr.border-bottom td {
+    border-bottom: 1pt solid #ff000d;
+  } */
+  table  tr {
+    position : relative;
+}
+
+table tbody tr td {
+    position : relative; 
+    z-index : 2; 
+}
+  table tbody tr::after {
+    content : '';
+    position : absolute;
+    z-index : 1;  
+    top : 0px;
+    left : 0px;
+    width : 100%;
+    height : 100%;
+    border : 1px solid green; 
+}

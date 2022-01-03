@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ChatComponent from './ChatComponent';
 import './ChatList.css'
+import {Link } from 'react-router-dom'
 
 class ChatList extends Component {
     constructor(props) {
@@ -66,11 +67,9 @@ componentDidMount(){
               </button>
               <h2 className='sub-header'>Chats</h2>
               </div>
-              <table className='chat-list'>
                {friendList.map((friend)=>{
-                 return<ChatComponent  key = {friend.user_id} friend={friend}/>
+                 return<ChatComponent  key = {friend.user_id} friend={friend} setStateChange={this.props.setStateChange}/>
                })}
-               </table>
                 
             </div>
         );

@@ -70,7 +70,7 @@ class SignIn extends Component {
         .then(data => {
             if(data.responseCode===200){ 
                 console.log(this.props.setStateChange)
-                this.props.setStateChange(data.responseData.access_token)
+                this.props.setStateChange({access_token:data.responseData.access_token})
                 this.setState({
                     access_token:data.responseData.access_token,
                     redirect:true

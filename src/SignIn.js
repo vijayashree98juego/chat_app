@@ -53,6 +53,7 @@ class SignIn extends Component {
     if (!password) {
       errors["password"] = "password cannot be empty!!!";
     }
+    let
 
     if (Object.entries(errors).length === 0) {
 
@@ -68,10 +69,13 @@ class SignIn extends Component {
           this.state.password,
       };
 
+
       fetch("https://api-us.juegogames.com/NOMOS-V3/users/sign_in", data)
         .then((response) => response.json())
         .then((data) => {
           if (data.responseCode === 200) {
+            localStorage.setItem('access_token', data.responseData.access_token);
+            localStorage.setItem('user_name',data.responseData.user_name)
             this.props.setStateChange({
               access_token: data.responseData.access_token,
               user_name: data.responseData.user_name,

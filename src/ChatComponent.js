@@ -11,6 +11,9 @@ class ChatComponent extends Component {
   }
 
   onChangeHandle() {
+    localStorage.setItem('other_user_id', this.props.user_id);
+    localStorage.setItem('other_user_name',this.props.user_name);
+    localStorage.removeItem('chat_messages')
     this.props.setStateChange({
       other_user_id: this.props.user_id,
       other_user_name: this.props.user_name,

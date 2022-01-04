@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Navigate } from 'react-router';
 import ChatComponent from './ChatComponent';
 import './ChatList.css'
+import {APICall} from './APICall.js'
 
 
 class ChatList extends Component {
@@ -20,22 +21,27 @@ userLogout(){
         logout:true
     })
 }
-componentDidMount(){ 
+async componentDidMount(){ 
     let accessToken=this.props.accessToken?this.props.accessToken:localStorage.getItem('access_token')
     let url='https://api-us.juegogames.com/NOMOS-V3/chat?chat_type=0';
-            const data = {
-                method: 'GET',
-                headers: {access_token:accessToken }                    
-            };
+         
+              let  header={access_token:accessToken }                    
+
             // Simple GET request using fetch
-             fetch(url,data)
-            .then(response => response.json())
-            .then(data =>{
-                localStorage.setItem('friend_list',JSON.stringify([...data.responseData.chat_conversations]))
+            let result = await APICall('chat?chat_type=0','GET',header);
+            localStorage.setItem('friend_list',JSON.stringify([...result.responseData.chat_conversations]))
                 this.setState( {
-                    friendList:[...data.responseData.chat_conversations]
+                    friendList:[...result.responseData.chat_conversations]
                 })
-            });  
+             
+            //  fetch(url,data)
+            // .then(response => response.json())
+            // .then(data =>{
+            //     localStorage.setItem('friend_list',JSON.stringify([...data.responseData.chat_conversations]))
+            //     this.setState( {
+            //         friendList:[...data.responseData.chat_conversations]
+            //     })
+            // });  
 }  
   
     render() {

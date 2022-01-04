@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./SignIn.css";
 import { Navigate } from "react-router-dom";
-
+import {APICall} from './APICall.js'
 
 class SignIn extends Component {
   constructor(props) {
@@ -9,7 +9,6 @@ class SignIn extends Component {
     this.state = {
       username: "",
       password: "",
-      type: 2,
       redirect: false,
       errors: "",
     };
@@ -44,7 +43,7 @@ class SignIn extends Component {
     });
   }
 
-  onSubmitHandler() {
+  async onSubmitHandler() {
     let username = this.state.username;
     let password = this.state.password;
     let errors = {};
@@ -54,6 +53,7 @@ class SignIn extends Component {
     if (!password) {
       errors["password"] = "password cannot be empty!!!";
     }
+
     if(localStorage.getItem('credential')){
       let {userName,userPassword}=JSON.parse(localStorage.getItem('credential'));
      if(userName===username&&userPassword===password){
@@ -66,38 +66,48 @@ class SignIn extends Component {
     }
 
     if (Object.entries(errors).length === 0) {
-      const data = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body:
-          "type=" +
-          this.state.type +
-          "&email=" +
+      const data = "type=2&email=" +
           this.state.username +
           "&password=" +
-          this.state.password,
-      };
+          this.state.password;
+      let result= await APICall('users/sign_in','POST',data);
+     
+            if (result.responseCode === 200) {
+              let credentail= {userName:username,userPassword:password}
+              localStorage.setItem('access_token', result.responseData.access_token);
+              localStorage.setItem('user_name',result.responseData.user_name)
+              localStorage.setItem('credential',JSON.stringify(credentail))
+              this.props.setStateChange({
+                access_token: result.responseData.access_token,
+                user_name: result.responseData.user_name,
+              });
+              this.setState({
+                redirect: true,
+              });
+            } else {
+              alert("Incorrect username or password");
+            }
 
 
-      fetch("https://api-us.juegogames.com/NOMOS-V3/users/sign_in", data)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.responseCode === 200) {
-            let credentail= {userName:username,userPassword:password}
-            localStorage.setItem('access_token', data.responseData.access_token);
-            localStorage.setItem('user_name',data.responseData.user_name)
-            localStorage.setItem('credential',JSON.stringify(credentail))
-            this.props.setStateChange({
-              access_token: data.responseData.access_token,
-              user_name: data.responseData.user_name,
-            });
-            this.setState({
-              redirect: true,
-            });
-          } else {
-            alert("Incorrect username or password");
-          }
-        });
+      // fetch("https://api-us.juegogames.com/NOMOS-V3/users/sign_in", data)
+      //   .then((response) => response.json())
+      //   .then((data) => {
+      //     if (data.responseCode === 200) {
+      //       let credentail= {userName:username,userPassword:password}
+      //       localStorage.setItem('access_token', data.responseData.access_token);
+      //       localStorage.setItem('user_name',data.responseData.user_name)
+      //       localStorage.setItem('credential',JSON.stringify(credentail))
+      //       this.props.setStateChange({
+      //         access_token: data.responseData.access_token,
+      //         user_name: data.responseData.user_name,
+      //       });
+      //       this.setState({
+      //         redirect: true,
+      //       });
+      //     } else {
+      //       alert("Incorrect username or password");
+      //     }
+      //   });
     } else {
       this.setState({
         errors: errors,

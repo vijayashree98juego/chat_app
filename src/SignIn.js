@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./SignIn.css";
 import { Navigate } from "react-router-dom";
 
+
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -53,10 +54,18 @@ class SignIn extends Component {
     if (!password) {
       errors["password"] = "password cannot be empty!!!";
     }
-    let
+    if(localStorage.getItem('credential')){
+      let {userName,userPassword}=JSON.parse(localStorage.getItem('credential'));
+     if(userName===username&&userPassword===password){
+      return this.setState({
+        redirect: true,
+      });
+     }else if(userName===username){
+      errors["password"] = "Invalid password!!!";
+     }
+    }
 
     if (Object.entries(errors).length === 0) {
-
       const data = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,8 +83,10 @@ class SignIn extends Component {
         .then((response) => response.json())
         .then((data) => {
           if (data.responseCode === 200) {
+            let credentail= {userName:username,userPassword:password}
             localStorage.setItem('access_token', data.responseData.access_token);
             localStorage.setItem('user_name',data.responseData.user_name)
+            localStorage.setItem('credential',JSON.stringify(credentail))
             this.props.setStateChange({
               access_token: data.responseData.access_token,
               user_name: data.responseData.user_name,

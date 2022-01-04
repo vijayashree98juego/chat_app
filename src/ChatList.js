@@ -7,40 +7,12 @@ class ChatList extends Component {
     constructor(props) {
         super(props);
         this.state={
-          friendList: [
-            {
-                "chat_type": 1,
-                "chat_id": 53,
-                "chat_name": "10_189",
-                "last_message": "Hello",
-                "is_last_message_attachment": false,
-                "last_message_time": 1640845443484,
-                "unread_count": 1,
-                "user_id": 10,
-                "user_name": "Ganesh Acharya",
-                "profile_picture": "https://nomos-server.s3.amazonaws.com/NOMOS/d55facca-7558-4773-b7d2-645ebc8121bd.png",
-                "online_status": false
-            },
-            {
-                "chat_type": 1,
-                "chat_id": 52,
-                "chat_name": "188_189",
-                "last_message": "hiii",
-                "is_last_message_attachment": false,
-                "last_message_time": 1640786802156,
-                "unread_count": 1,
-                "user_id": 188,
-                "user_name": "tester",
-                "profile_picture": "",
-                "online_status": false
-            }
-        ]
+          friendList: []
         }
 }
 
 componentDidMount(){ 
     let url='https://api-us.juegogames.com/NOMOS-V3/chat?chat_type=0';
-         console.log("component did mount")  
             const data = {
                 method: 'GET',
                 headers: {access_token:this.props.accessToken }                    
@@ -68,7 +40,7 @@ componentDidMount(){
               <h2 className='sub-header'>Chats</h2>
               </div>
                {friendList.map((friend)=>{
-                 return<ChatComponent  key = {friend.user_id} friend={friend} setStateChange={this.props.setStateChange}/>
+                 return<ChatComponent  key = {friend.user_id} user_id={friend.user_id} user_name={friend.user_name} setStateChange={this.props.setStateChange} redirect={true}/>
                })}
                 
             </div>

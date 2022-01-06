@@ -15,7 +15,6 @@ class SearchList extends Component {
     let accessToken = this.props.accessToken
       ? this.props.accessToken
       : localStorage.getItem("access_token");
-    let url = "https://api-us.juegogames.com/NOMOS-V3/chat?chat_type=0";
 
     let header = { access_token: accessToken };
 

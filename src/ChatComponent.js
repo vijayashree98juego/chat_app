@@ -18,11 +18,11 @@ class ChatComponent extends Component {
   onStateChange(data) {
     this.setState(data);
   }
-  
+
   onChangeHandle() {
     localStorage.setItem("other_user_id", this.props.user_id);
     localStorage.setItem("other_user_name", this.props.user_name);
-    localStorage.removeItem("chat_messages");
+    // localStorage.removeItem("chat_messages_"+this.props.user_id);
     this.props.setStateChange({
       other_user_id: this.props.user_id,
       other_user_name: this.props.user_name,
@@ -49,7 +49,7 @@ class ChatComponent extends Component {
             <img className="circular-square" src={profile} alt={profile} />
             <p
               className="profile-name"
-              style={!this.state.redirect ? { fontWeight: "bold" } : null}
+              style={!this.state.redirect ? { fontWeight: "bold" } : { fontWeight: "bold" }}
             >
               {this.props.user_name}{" "}
             </p>

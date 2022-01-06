@@ -22,9 +22,15 @@ class ChatDetail extends Component {
   }
 
   onSubmitHandler() {
+    console.log("on submit handler....")
+    console.log(this.props.other_user_id)
     if (this.state.new_message === "") {
       return alert("Cannot send empty text!!!!...please type some thing");
     }
+    let otherUserId = this.props.other_user_id
+    ? this.props.other_user_id
+    : localStorage.getItem("other_user_id");
+
     let chatMessages = [
       ...this.state.chat_messages,
       {
@@ -35,7 +41,8 @@ class ChatDetail extends Component {
         message: this.state.new_message,
       },
     ];
-    localStorage.setItem("chat_messages", JSON.stringify(chatMessages));
+
+    localStorage.setItem("chat_messages_"+otherUserId, JSON.stringify(chatMessages));
     this.setStateChange({
       redirect: true,
       chat_messages: chatMessages,
@@ -51,6 +58,7 @@ class ChatDetail extends Component {
     });
   }
   async componentDidMount() {
+    console.log("did mount....")
     let otherUserId = this.props.other_user_id
       ? this.props.other_user_id
       : localStorage.getItem("other_user_id");
@@ -60,16 +68,25 @@ class ChatDetail extends Component {
       "GET",
       header
     );
-    let messages = localStorage.getItem("chat_messages")
-      ? JSON.parse(localStorage.getItem("chat_messages"))
+    console.log(otherUserId)
+    console.log("djjddjjdjagghafaa")
+    console.log(this.props.other_user_id)
+    let messages = localStorage.getItem("chat_messages_"+otherUserId)
+      ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId))
       : result.responseData.messages;
-    localStorage.setItem("chat_messages", JSON.stringify(messages));
-    this.setStateChange({ chat_messages: messages });
+      console.log(messages)
+    localStorage.setItem("chat_messages_"+otherUserId, JSON.stringify(messages));
+     return this.setStateChange({ chat_messages: messages });
   }
 
   render() {
-    let messages = localStorage.getItem("chat_messages")
-      ? JSON.parse(localStorage.getItem("chat_messages"))
+    console.log("djdjjd")
+    console.log(this.props.other_user_id)
+    let otherUserId = this.props.other_user_id
+    ? this.props.other_user_id
+    : localStorage.getItem("other_user_id");
+    let messages = localStorage.getItem("chat_messages_"+otherUserId)
+      ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId))
       : this.state.chat_messages;
     return (
       <div>

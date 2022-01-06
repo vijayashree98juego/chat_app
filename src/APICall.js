@@ -1,32 +1,31 @@
-let apiEndPoint ='https://api-us.juegogames.com/NOMOS-V3/';
+let apiEndPoint = "https://api-us.juegogames.com/NOMOS-V3/";
 
-export const APICall =async (path,methodName,data)=>{
-    let url=apiEndPoint+''+path;
-    console.log(url)
-    let inputData={};
-    if(methodName==='GET'){
-      inputData=  {
-            method: 'GET',
-            headers: data                   
-        }
-    }
+export const APICall = async (path, methodName, data, headers = {}) => {
+  let url = apiEndPoint + "" + path;
+  let inputData = {};
 
-    if(methodName==='POST'){
-       inputData={
-        method: methodName,
-        headers: { "Content-Type": "application/json" },
-        body:data
-      }
-    }
+  if (methodName === "GET") {
+    inputData = {
+      method: "GET",
+      headers: data,
+    };
+  }
 
-    return await fetch(url, inputData)
-    .then((response) =>  response.json())
+  if (methodName === "POST") {
+    inputData = {
+      method: methodName,
+      headers: headers,
+      body: data,
+    };
+  }
+
+  return await fetch(url, inputData)
+    .then((response) => response.json())
     .then((data) => {
-        return data;       
-    }).catch((err)=>{
-        return err;
-    })  
-  
-}
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
 export default APICall;
-

@@ -71,15 +71,17 @@ class SignIn extends Component {
           "&password=" +
           this.state.password;
       let result= await APICall('users/sign_in','POST',data);
-     
+    
             if (result.responseCode === 200) {
               let credentail= {userName:username,userPassword:password}
               localStorage.setItem('access_token', result.responseData.access_token);
               localStorage.setItem('user_name',result.responseData.user_name)
+              localStorage.setItem('user_id',result.responseData.user_id)
               localStorage.setItem('credential',JSON.stringify(credentail))
               this.props.setStateChange({
                 access_token: result.responseData.access_token,
                 user_name: result.responseData.user_name,
+                user_id:result.responseData.user_id
               });
               this.setState({
                 redirect: true,
@@ -87,27 +89,6 @@ class SignIn extends Component {
             } else {
               alert("Incorrect username or password");
             }
-
-
-      // fetch("https://api-us.juegogames.com/NOMOS-V3/users/sign_in", data)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     if (data.responseCode === 200) {
-      //       let credentail= {userName:username,userPassword:password}
-      //       localStorage.setItem('access_token', data.responseData.access_token);
-      //       localStorage.setItem('user_name',data.responseData.user_name)
-      //       localStorage.setItem('credential',JSON.stringify(credentail))
-      //       this.props.setStateChange({
-      //         access_token: data.responseData.access_token,
-      //         user_name: data.responseData.user_name,
-      //       });
-      //       this.setState({
-      //         redirect: true,
-      //       });
-      //     } else {
-      //       alert("Incorrect username or password");
-      //     }
-      //   });
     } else {
       this.setState({
         errors: errors,

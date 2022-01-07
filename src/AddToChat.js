@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PopUp from "./PopUp.js";
 
 import APICall from "./APICall.js";
 class AddToChat extends Component {
@@ -7,44 +8,59 @@ class AddToChat extends Component {
     this.state = {
       user_type: 0,
       redirect: false,
+      is_pop_up: false,
+      pop_up_message: "",
     };
     this.handleClick = this.handleClick.bind(this);
+    this.onStateChange = this.onStateChange.bind(this);
+  }
+  onStateChange(data) {
+    this.setState(data);
   }
 
   async handleClick() {
     if (this.state.user_type === 1) {
-      return alert("request is Receiced.You can start the conversation now!!!");
+      return this.onStateChange({
+        is_pop_up: true,
+        pop_up_message:
+          "request is Receiced.You can start the conversation now!!!",
+      });
     }
     if (this.state.user_type === 2) {
-      return alert("friend request is alreday sent!!!!!!");
+      return this.onStateChange({
+        is_pop_up: true,
+        pop_up_message: "friend request is already sent!!!!!!",
+      });
     }
     if (this.state.user_type === 3) {
       this.props.onStateChange({ redirect: true });
-      return alert("you can continue the conversation!!");
+      return this.onStateChange({
+        is_pop_up: true,
+        pop_up_message: "you can continue the conversation!!",
+      });
     }
 
     let accessToken = this.props.accessToken
       ? this.props.accessToken
       : localStorage.getItem("access_token");
 
-    if (this.state.user_type == 4) {
+    if (this.state.user_type === 4) {
       const data = "friend_user_id=" + this.props.userId;
       const headers = { access_token: accessToken };
 
       // Simple GET request using fetch
       let result = await APICall("friends", "POST", data, headers);
-      this.setState({
+      return this.onStateChange({
         user_type: 2,
+        is_pop_up: true,
+        pop_up_message: "Friend request is sent just now!!!!",
       });
-
-      return "Friend request is sent just now!!!!";
     }
   }
   async componentDidMount() {
     let accessToken = this.props.accessToken
       ? this.props.accessToken
       : localStorage.getItem("access_token");
-    let url = "https://api-us.juegogames.com/NOMOS-V3/chat?chat_type=0";
 
     const data = "friend_user_id=" + this.props.userId;
     const headers = { access_token: accessToken };
@@ -75,6 +91,14 @@ class AddToChat extends Component {
     return (
       <div>
         <button onClick={this.handleClick}>{text}</button>
+        {this.state.is_pop_up && (
+          <PopUp
+            message={this.state.pop_up_message}
+            onStateChange={this.onStateChange}
+            header={"Message!!!"}
+            is_logout={false}
+          />
+        )}
       </div>
     );
   }

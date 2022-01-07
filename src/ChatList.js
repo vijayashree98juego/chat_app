@@ -3,7 +3,7 @@ import { Navigate } from "react-router";
 import ChatComponent from "./ChatComponent";
 import "./ChatList.css";
 import { APICall } from "./APICall.js";
-
+import PopUp from './PopUp'
 class ChatList extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +13,11 @@ class ChatList extends Component {
       on_search: false,
       search_text: "",
       on_search_redirect: false,
+      is_pop_up:false,
+      pop_up_message:'',
+      pop_up_header:'',
+      can_logout:false
+      
     };
     this.userLogout = this.userLogout.bind(this);
     this.searchHandler = this.searchHandler.bind(this);
@@ -20,17 +25,23 @@ class ChatList extends Component {
     this.onChangeHandler = this.onChangeHandler.bind(this);
   }
 
-  userLogout() {
-    this.setState({
-      logout: true,
-    });
-    localStorage.clear();
-  }
 
   onStateChange(data) {
+    console.log("on state change")
     this.setState(data);
   }
 
+  userLogout() {
+    console.log("user logout")
+    this.onStateChange({
+      can_logout: true,
+      is_pop_up:true,
+      pop_up_message:'Are you sure you want to logout now!!!',
+      pop_up_header:'Alert!!!'
+
+    });
+    // localStorage.clear();
+  }
   onChangeHandler(e) {
     let text = e.target.value;
     this.onStateChange({ search_text: text });
@@ -41,7 +52,8 @@ class ChatList extends Component {
       return this.onStateChange({ on_search: true });
     }
     if (this.state.search_text.length < 3) {
-      return alert("invalid search!!!!");
+     return this.onStateChange({is_pop_up:true,pop_up_message:'Invalid search.Minimum of 3 characters are required!!!',pop_up_header:'Error!!!'})
+
     }
 
     this.props.setStateChange({
@@ -56,7 +68,7 @@ class ChatList extends Component {
     let accessToken = this.props.accessToken
       ? this.props.accessToken
       : localStorage.getItem("access_token");
-    let url = "https://api-us.juegogames.com/NOMOS-V3/chat?chat_type=0";
+
 
     let header = { access_token: accessToken };
 
@@ -106,6 +118,7 @@ class ChatList extends Component {
         })}
         {this.state.logout && <Navigate to="/" />}
         {this.state.on_search_redirect && <Navigate to="/search" />}
+        {this.state.is_pop_up&&<PopUp message={this.state.pop_up_message} onStateChange={this.onStateChange} header={this.state.pop_up_header} is_logout={this.state.can_logout} />}
       </div>
     );
   }

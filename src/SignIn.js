@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./SignIn.css";
 import { Navigate } from "react-router-dom";
-import {APICall} from './APICall.js'
+import { APICall } from "./APICall.js";
+import PopUp from "./PopUp.js";
 
 class SignIn extends Component {
   constructor(props) {
@@ -11,13 +12,18 @@ class SignIn extends Component {
       password: "",
       redirect: false,
       errors: "",
+      is_pop_up: false,
+      pop_up_message: "",
     };
-
+    this.onStateChange = this.onStateChange.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onSubmitHandler = this.onSubmitHandler.bind(this);
   }
 
+  onStateChange(data) {
+    this.setState(data);
+  }
   onChangeUsername(e) {
     let errors = e.target.value
       ? { username: "", password: this.state.errors["password"] }
@@ -25,7 +31,7 @@ class SignIn extends Component {
           username: "username cannot be empty",
           password: this.state.errors["password"],
         };
-    this.setState({
+    this.onStateChange({
       username: e.target.value,
       errors: errors,
     });
@@ -37,7 +43,7 @@ class SignIn extends Component {
           password: "password cannot be empty",
           username: this.state.errors["username"],
         };
-    this.setState({
+    this.onStateChange({
       password: e.target.value,
       errors: errors,
     });
@@ -54,43 +60,49 @@ class SignIn extends Component {
       errors["password"] = "password cannot be empty!!!";
     }
 
-    if(localStorage.getItem('credential')){
-      let {userName,userPassword}=JSON.parse(localStorage.getItem('credential'));
-     if(userName===username&&userPassword===password){
-      return this.setState({
-        redirect: true,
-      });
-     }else if(userName===username){
-      errors["password"] = "Invalid password!!!";
-     }
+    if (localStorage.getItem("credential")) {
+      let { userName, userPassword } = JSON.parse(
+        localStorage.getItem("credential")
+      );
+      if (userName === username && userPassword === password) {
+        return this.onStateChange({
+          redirect: true,
+        });
+      } else if (userName === username) {
+        errors["password"] = "Invalid password!!!";
+      }
     }
 
     if (Object.entries(errors).length === 0) {
-      const data = "type=2&email=" +
-          this.state.username +
-          "&password=" +
-          this.state.password;
-      let result= await APICall('users/sign_in','POST',data);
-    
-            if (result.responseCode === 200) {
-              let credentail= {userName:username,userPassword:password}
-              localStorage.setItem('access_token', result.responseData.access_token);
-              localStorage.setItem('user_name',result.responseData.user_name)
-              localStorage.setItem('user_id',result.responseData.user_id)
-              localStorage.setItem('credential',JSON.stringify(credentail))
-              this.props.setStateChange({
-                access_token: result.responseData.access_token,
-                user_name: result.responseData.user_name,
-                user_id:result.responseData.user_id
-              });
-              this.setState({
-                redirect: true,
-              });
-            } else {
-              alert("Incorrect username or password");
-            }
+      const data =
+        "type=2&email=" +
+        this.state.username +
+        "&password=" +
+        this.state.password;
+      let result = await APICall("users/sign_in", "POST", data);
+
+      if (result.responseCode === 200) {
+        let credentail = { userName: username, userPassword: password };
+        localStorage.setItem("access_token", result.responseData.access_token);
+        localStorage.setItem("user_name", result.responseData.user_name);
+        localStorage.setItem("user_id", result.responseData.user_id);
+        localStorage.setItem("credential", JSON.stringify(credentail));
+        this.props.setStateChange({
+          access_token: result.responseData.access_token,
+          user_name: result.responseData.user_name,
+          user_id: result.responseData.user_id,
+        });
+        this.onStateChange({
+          redirect: true,
+        });
+      } else {
+        return this.onStateChange({
+          is_pop_up: true,
+          pop_up_message: "Incorrect username or password",
+        });
+      }
     } else {
-      this.setState({
+      this.onStateChange({
         errors: errors,
       });
     }
@@ -146,6 +158,14 @@ class SignIn extends Component {
           </div>
         </div>
         {this.state.redirect && <Navigate to="/chat" />}
+        {this.state.is_pop_up && (
+          <PopUp
+            message={this.state.pop_up_message}
+            onStateChange={this.onStateChange}
+            header={"Error!!!"}
+            is_logout={false}
+          />
+        )}
       </div>
     );
   }

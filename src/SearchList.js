@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import APICall from "./APICall";
-import ChatComponent from "./ChatComponent";
-import RedirectPage from "./RedirectPage";
+import APICallGET from "./components/APICallGET";
+import ChatComponent from "./components/ChatComponent";
+import RedirectPage from "./components/RedirectPage";
+import {URL_FOR_SEARCH} from './components/constant'
 class SearchList extends Component {
   constructor(props) {
     super(props);
@@ -11,23 +12,13 @@ class SearchList extends Component {
     };
   }
 
-  async componentDidMount() {
-    let accessToken = this.props.accessToken
-      ? this.props.accessToken
-      : localStorage.getItem("access_token");
-
+ componentDidMount() {
+    let accessToken = this.props.accessToken? this.props.accessToken: localStorage.getItem("access_token");
     let header = { access_token: accessToken };
 
     // Simple GET request using fetch
-    let result = await APICall(
-      "search?search_text=" + this.props.searchText + "&filter_type=2",
-      "GET",
-      header
-    );
-    localStorage.setItem(
-      "search_list",
-      JSON.stringify([...result.responseData.people])
-    );
+    let result =  APICallGET(URL_FOR_SEARCH+"?search_text=" + this.props.searchText + "&filter_type=2", header);
+    localStorage.setItem( "search_list",JSON.stringify([...result.responseData.people]));
 
     this.setState({
       searched_list: [...result.responseData.people],
@@ -36,12 +27,8 @@ class SearchList extends Component {
   }
 
   render() {
-    let searchedUserList = localStorage.getItem("search_list")
-      ? JSON.parse(localStorage.getItem("search_list"))
-      : this.state.searched_list;
-    let userList = searchedUserList.filter(
-      (user) => user.user_id !== this.props.userId
-    );
+    let searchedUserList = this.state.searched_list;
+    let userList = searchedUserList.filter((user) => user.user_id !== this.props.userId);
 
     return (
       <div>
@@ -50,22 +37,16 @@ class SearchList extends Component {
           <h2 className="sub-header">Search List</h2>
         </div>
         <RedirectPage />
-        {userList.length &&
+        {!!userList.length &&
           userList.map((user) => {
             return (
               <div key={user.user_id}>
-                <ChatComponent
-                  key={user.user_id}
-                  user_id={user.user_id}
-                  user_name={user.user_name}
-                  setStateChange={this.props.setStateChange}
-                  redirect={false}
-                  buttonIsRequired={true}
-                />
+                <ChatComponent key={user.user_id} user_id={user.user_id} user_name={user.user_name} setStateChange={this.props.setStateChange} redirect={false} buttonIsRequired={true}/>
               </div>
             );
           })}
-        {!userList.length && this.state.on_load && <h1>No user found</h1>}
+        {!userList.length && this.state.on_load && <h1 style={{textAlign:"center"}}>No user found</h1>}
+        {""}
       </div>
     );
   }

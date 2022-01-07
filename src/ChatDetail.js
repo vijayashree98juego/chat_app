@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import ChatComponent from "./ChatComponent";
-import ChatMessage from "./ChatMessage";
-import RedirectPage from "./RedirectPage";
-import { APICall } from "./APICall";
-import PopUp from './PopUp.js'
+import ChatComponent from "./components/ChatComponent";
+import ChatMessage from "./components/ChatMessage";
+import RedirectPage from "./components/RedirectPage";
+import  APICallGET  from "./components/APICallGET";
+import {URL_FOR_CHAT_MESSAGES} from './components/constant'
 
 class ChatDetail extends Component {
   constructor(props) {
@@ -12,8 +12,6 @@ class ChatDetail extends Component {
       chat_messages: [],
       new_message: "",
       redirect: false,
-      is_pop_up:false,
-      pop_up_message:'',
       other_user_id:0
     };
     this.onStateChange = this.onStateChange.bind(this);
@@ -27,7 +25,7 @@ class ChatDetail extends Component {
 
   onSubmitHandler() {
     if (this.state.new_message === "") {
-     return this.onStateChange({is_pop_up:true,pop_up_message:'Cannot send empty text!!!!...please type some thing'})
+      alert('Cannot send empty text!!!!...please type some thing')
     }
 
     let chatMessages = [
@@ -42,6 +40,7 @@ class ChatDetail extends Component {
     ];
 
     localStorage.setItem("chat_messages_"+this.state.other_user_id, JSON.stringify(chatMessages));
+
     this.onStateChange({
       redirect: true,
       chat_messages: chatMessages,
@@ -56,17 +55,13 @@ class ChatDetail extends Component {
       new_message: message,
     });
   }
-  async componentDidMount() {
 
+   componentDidMount() {
     let otherUserId = this.props.other_user_id
       ? this.props.other_user_id
       : localStorage.getItem("other_user_id");
     let header = { access_token: this.props.accessToken };
-    let result = await APICall(
-      "chat/messages?chat_type=0&user_id=" + otherUserId,
-      "GET",
-      header
-    );
+    let result = APICallGET(URL_FOR_CHAT_MESSAGES+'?chat_type=0&user_id='+otherUserId,header);
 
     let messages = localStorage.getItem("chat_messages_"+otherUserId)
       ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId))
@@ -77,36 +72,18 @@ class ChatDetail extends Component {
   }
 
   render() {
-    let messages = localStorage.getItem("chat_messages_"+this.state.other_user_id)
-      ? JSON.parse(localStorage.getItem("chat_messages_"+this.state.other_user_id))
-      : this.state.chat_messages;
+    let messages =this.state.chat_messages;
     return (
       <div>
-        <ChatComponent
-          user_name={this.props.other_user_name}
-          user_id={this.props.user_id}
-          redirect={false}
-        />
+        <ChatComponent user_name={this.props.other_user_name} user_id={this.props.user_id} redirect={false}/>
         <RedirectPage />
         {messages.map((user) => {
           return (
-            <ChatMessage
-              key={user.message_id}
-              sender_name={user.sender_name}
-              message={user.message}
-            />
+            <ChatMessage key={user.message_id} sender_name={user.sender_name} message={user.message} />
           );
         })}
-        <input
-          type="text"
-          name="message"
-          value={this.state.new_message}
-          onChange={this.onChangeHandler}
-        />
-        <button type="submit" onClick={this.onSubmitHandler}>
-          SEND
-        </button>
-        {this.state.is_pop_up&&<PopUp message={this.state.pop_up_message} onStateChange={this.onStateChange} header={"Error!!!"} is_logout={false}/>}
+        <input type="text" name="message" value={this.state.new_message} onChange={this.onChangeHandler}/>
+        <button type="submit" onClick={this.onSubmitHandler}>SEND</button>
       </div>
     );
   }

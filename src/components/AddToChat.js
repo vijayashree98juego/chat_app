@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-import PopUp from "./PopUp.js";
+import { URL_FOR_FREIND_INVITE } from "./constant.js";
+import APICallPOST from "./APICallPOST";
 
-import APICall from "./APICall.js";
 class AddToChat extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user_type: 0,
       redirect: false,
-      is_pop_up: false,
-      pop_up_message: "",
     };
     this.handleClick = this.handleClick.bind(this);
     this.onStateChange = this.onStateChange.bind(this);
@@ -18,26 +16,18 @@ class AddToChat extends Component {
     this.setState(data);
   }
 
-  async handleClick() {
+  handleClick() {
     if (this.state.user_type === 1) {
-      return this.onStateChange({
-        is_pop_up: true,
-        pop_up_message:
-          "request is Receiced.You can start the conversation now!!!",
-      });
+      alert("request is Receiced.You can start the conversation now!!!")
     }
+
     if (this.state.user_type === 2) {
-      return this.onStateChange({
-        is_pop_up: true,
-        pop_up_message: "friend request is already sent!!!!!!",
-      });
+      alert("friend request is already sent!!!!!!")
     }
+
     if (this.state.user_type === 3) {
       this.props.onStateChange({ redirect: true });
-      return this.onStateChange({
-        is_pop_up: true,
-        pop_up_message: "you can continue the conversation!!",
-      });
+      alert("you can continue the conversation!!")
     }
 
     let accessToken = this.props.accessToken
@@ -49,15 +39,14 @@ class AddToChat extends Component {
       const headers = { access_token: accessToken };
 
       // Simple GET request using fetch
-      let result = await APICall("friends", "POST", data, headers);
-      return this.onStateChange({
+      let result = APICallPOST(URL_FOR_FREIND_INVITE,data, headers);
+       this.onStateChange({
         user_type: 2,
-        is_pop_up: true,
-        pop_up_message: "Friend request is sent just now!!!!",
       });
+      alert('Friend request is sent just now!!!!')
     }
   }
-  async componentDidMount() {
+ componentDidMount() {
     let accessToken = this.props.accessToken
       ? this.props.accessToken
       : localStorage.getItem("access_token");
@@ -65,7 +54,7 @@ class AddToChat extends Component {
     const data = "friend_user_id=" + this.props.userId;
     const headers = { access_token: accessToken };
     // Simple GET request using fetch
-    let result = await APICall("friends", "POST", data, headers);
+    let result =  APICallPOST(URL_FOR_FREIND_INVITE,data, headers);
 
     this.setState({
       user_type: result.responseData.friendship_type,
@@ -91,14 +80,6 @@ class AddToChat extends Component {
     return (
       <div>
         <button onClick={this.handleClick}>{text}</button>
-        {this.state.is_pop_up && (
-          <PopUp
-            message={this.state.pop_up_message}
-            onStateChange={this.onStateChange}
-            header={"Message!!!"}
-            is_logout={false}
-          />
-        )}
       </div>
     );
   }

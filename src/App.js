@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import SignIn from "./SignIn.js";
-import ChatList from "./ChatList.js";
+import SignIn from "./pages/SignIn.js";
+import ChatList from "./pages/ChatList.js";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ChatDetail from "./ChatDetail.js";
-import SearchList from "./SearchList.js";
+import ChatDetail from "./pages/ChatDetail.js";
+import SearchList from "./pages/SearchList.js";
 class App extends Component {
   constructor(props) {
     super(props);

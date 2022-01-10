@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import "./ChatComponent.css";
-import "./ChatList.css";
-import profile from "./profile.png";
+import "../styles/ChatComponent.css";
+import "../styles/ChatList.css";
+import profile from "../Assets/profile.png";
 import { Link } from "react-router-dom";
 import AddToChat from "./AddToChat";
 

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import "./components/SignIn.css";
+import "../styles/SignIn.css";
 import { Navigate } from "react-router-dom";
-import  APICallPOST  from "./components/APICallPOST";
-import {URL_FOR_SIGN_IN} from './components/constant'
+import  APICallPOST  from "../services/APICallPOST";
+import {URL_FOR_SIGN_IN} from '../global/constant'
 
 class SignIn extends Component {
   constructor(props) {
@@ -53,11 +53,8 @@ class SignIn extends Component {
 
     if (Object.entries(errors).length === 0) {
       const data = "type=2&email=" +this.state.username +"&password=" +this.state.password;
-      new Promise((resolve)=>{
-        resolve(APICallPOST(URL_FOR_SIGN_IN, data));
-      })
-      .then((result)=>{
-        if (result.responseCode === 200) {
+   
+      APICallPOST(URL_FOR_SIGN_IN, data).then((result)=>{
             localStorage.setItem("access_token", result.responseData.access_token);
             localStorage.setItem("user_name", result.responseData.user_name);
             localStorage.setItem("user_id", result.responseData.user_id);
@@ -70,11 +67,8 @@ class SignIn extends Component {
             this.onStateChange({
               redirect: true,
             });
-          } else {
-            alert("Incorrect username or password");
-          }
       }).catch((err)=>{
-        alert('Something went wrong!!!')
+        console.error(err)
       })
     } else {
       this.onStateChange({

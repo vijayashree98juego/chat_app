@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { URL_FOR_FREIND_INVITE } from "./constant.js";
-import APICallPOST from "./APICallPOST";
+import { URL_FOR_FREIND_INVITE } from "../global/constant.js";
+import APICallPOST from "../services/APICallPOST";
 
 class AddToChat extends Component {
   constructor(props) {
@@ -37,15 +37,13 @@ class AddToChat extends Component {
       const data = "friend_user_id=" + this.props.userId;
       const headers = { access_token: accessToken };
 
-      new Promise((resolve)=>{
-        resolve(APICallPOST(URL_FOR_FREIND_INVITE,data, headers))
-      }).then((result)=>{
+      APICallPOST(URL_FOR_FREIND_INVITE,data, headers).then((result)=>{
         this.onStateChange({
           userType: 2,
         });
         alert('Friend request is sent just now!!!!');
       }).catch((err)=>{
-        alert('Something went wrong!!!')
+        console.error(err)
       })
     }
   }
@@ -55,14 +53,12 @@ class AddToChat extends Component {
     const data = "friend_user_id=" + this.props.userId;
     const headers = { access_token: accessToken };
 
-    new Promise((resolve)=>{
-      resolve(APICallPOST(URL_FOR_FREIND_INVITE,data, headers));
-    }).then((result)=>{
+    APICallPOST(URL_FOR_FREIND_INVITE,data, headers).then((result)=>{
      
     this.setState({
       userType: result.responseData.friendship_type,
     });
-    
+
     if (
       result.responseData.friendship_type === 3 ||
       result.responseData.friendship_type === 1
@@ -70,7 +66,7 @@ class AddToChat extends Component {
       this.props.onStateChange({ redirect: true });
     }
     }).catch((err)=>{
-      alert("Something went wrong!!!")
+      console.error(err)
     })
   }
 

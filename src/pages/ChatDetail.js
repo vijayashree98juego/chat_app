@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import ChatComponent from "./components/ChatComponent";
-import ChatMessage from "./components/ChatMessage";
-import RedirectPage from "./components/RedirectPage";
-import  APICallGET  from "./components/APICallGET";
-import {URL_FOR_CHAT_MESSAGES} from './components/constant'
+import ChatComponent from "../components/ChatComponent";
+import ChatMessage from "../components/ChatMessage";
+import RedirectPage from "../components/RedirectPage";
+import  APICallGET  from "../services/APICallGET";
+import {URL_FOR_CHAT_MESSAGES} from '../global/constant'
 
 class ChatDetail extends Component {
   constructor(props) {
@@ -61,16 +61,14 @@ class ChatDetail extends Component {
     let otherUserId = this.props.otherUserId ? this.props.otherUserId : localStorage.getItem("other_user_id");
     let header = { access_token: this.props.accessToken };
 
-    new Promise((resolve)=>{
-      resolve(APICallGET(URL_FOR_CHAT_MESSAGES+'?chat_type=0&user_id='+otherUserId,header))
-    }).then((result)=>{
-    
+    APICallGET(URL_FOR_CHAT_MESSAGES+'?chat_type=0&user_id='+otherUserId,header).then((result)=>{
+
     let messages = localStorage.getItem("chat_messages_"+otherUserId) ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId)): result.responseData.messages;
 
     localStorage.setItem("chat_messages_"+otherUserId, JSON.stringify(messages));
      return this.onStateChange({ chatMessages: messages ,otherUserId:otherUserId});
     }).catch((err)=>{
-      alert('Something went wrong!!!')
+      console.error(err)
     })
   }
 

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import ChatComponent from "./components/ChatComponent";
-import "./components/ChatList.css";
-import APICallGET from "./components/APICallGET";
-import {URL_FOR_CHAT_LIST} from './components/constant'
-import SearchComponent from "./components/SearchComponent";
+import ChatComponent from "../components/ChatComponent";
+import "../styles/ChatList.css";
+import APICallGET from "../services/APICallGET";
+import {URL_FOR_CHAT_LIST} from '../global/constant'
+import SearchComponent from "../components/SearchComponent";
 import { Navigate } from "react-router";
 class ChatList extends Component {
   constructor(props) {
@@ -56,9 +56,7 @@ class ChatList extends Component {
     let accessToken = this.props.accessToken ? this.props.accessToken: localStorage.getItem("access_token");
     let header = { access_token: accessToken };
 
-    new Promise((resolve)=>{
-      resolve(APICallGET(URL_FOR_CHAT_LIST+"?chat_type=0", header))
-    }).then((result)=>{
+    APICallGET(URL_FOR_CHAT_LIST+"?chat_type=0", header).then((result)=>{
       this.setState({
         friendList: [...result.responseData.chat_conversations],
       });

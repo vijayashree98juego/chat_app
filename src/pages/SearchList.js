@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import APICallGET from "./components/APICallGET";
-import ChatComponent from "./components/ChatComponent";
-import RedirectPage from "./components/RedirectPage";
-import {URL_FOR_SEARCH} from './components/constant'
+import APICallGET from "../services/APICallGET";
+import ChatComponent from "../components/ChatComponent";
+import RedirectPage from "../components/RedirectPage";
+import {URL_FOR_SEARCH} from '../global/constant'
 
 class SearchList extends Component {
   constructor(props) {
@@ -17,17 +17,16 @@ class SearchList extends Component {
     let accessToken = this.props.accessToken? this.props.accessToken: localStorage.getItem("access_token");
     let header = { access_token: accessToken };
 
-    new Promise((resolve)=>{
-      resolve(APICallGET(URL_FOR_SEARCH+"?search_text=" + this.props.searchText + "&filter_type=2", header))
-    }).then((result)=>{
+    APICallGET(URL_FOR_SEARCH+"?search_text=" + this.props.searchText + "&filter_type=2", header).then((result)=>{
       localStorage.setItem( "search_list",JSON.stringify([...result.responseData.people]));
       this.setState({
       searchedList: [...result.responseData.people],
       onLoad: true,
     });
     }).catch((err)=>{
-      alert('Something went wrong!!!')
+      console.error(err)
     })
+
   }
 
   render() {

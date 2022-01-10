@@ -20,45 +20,27 @@ class ChatComponent extends Component {
   }
 
   onChangeHandle() {
-    localStorage.setItem("other_user_id", this.props.user_id);
-    localStorage.setItem("other_user_name", this.props.user_name);
+    localStorage.setItem("other_user_id", this.props.userId);
+    localStorage.setItem("other_user_name", this.props.userName);
     
     this.props.setStateChange({
-      other_user_id: this.props.user_id,
-      other_user_name: this.props.user_name,
+      otherUserId: this.props.userId,
+      otherUserName: this.props.userName,
     });
   }
 
   render() {
     return (
       <div>
-        <Link
-          onClick={this.onChangeHandle}
-          to="/chatDetail"
-          className="profile-redirect"
-          style={!this.state.redirect ? { pointerEvents: "none" } : null}
-        >
-          <div
-            className="user-data"
-            style={ { backgroundColor: "lightblue" }
-            }
-          >
+        <Link onClick={this.onChangeHandle} to="/chatDetail" className="profile-redirect" style={!this.state.redirect ? { pointerEvents: "none" } : null} >
+          <div className="user-data" style={ { backgroundColor: "lightblue" }}>
             <img className="circular-square" src={profile} alt={profile} />
-            <p
-              className="profile-name"
-              style={{ fontWeight: "bold" }}
-            >
-              {this.props.user_name}{" "}
+            <p className="profile-name" style={{ fontWeight: "bold" }}>
+              {this.props.userName}{" "}
             </p>
           </div>
         </Link>
-        {this.props.buttonIsRequired && (
-          <AddToChat
-            key={this.props.user_id}
-            userId={this.props.user_id}
-            onStateChange={this.onStateChange}
-          />
-        )}
+        {this.props.isButtonRequired &&<AddToChat  userId={this.props.userId} onStateChange={this.onStateChange}/>}
       </div>
     );
   }

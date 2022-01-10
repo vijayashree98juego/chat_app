@@ -9,11 +9,12 @@ class ChatDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chat_messages: [],
-      new_message: "",
+      chatMessages: [],
+      newMessage: "",
       redirect: false,
-      other_user_id:0
+      otherUserId:0
     };
+
     this.onStateChange = this.onStateChange.bind(this);
     this.onSubmitHandler = this.onSubmitHandler.bind(this);
     this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -24,27 +25,27 @@ class ChatDetail extends Component {
   }
 
   onSubmitHandler() {
-    if (this.state.new_message === "") {
-      alert('Cannot send empty text!!!!...please type some thing')
+    if (this.state.newMessage === "") {
+     return alert('Cannot send empty text!!!!...please type some thing')
     }
-
+ 
     let chatMessages = [
-      ...this.state.chat_messages,
+      ...this.state.chatMessages,
       {
         message_id:
-          this.state.chat_messages[this.state.chat_messages.length - 1]
+          this.state.chatMessages[this.state.chatMessages.length - 1]
             .message_id + 1,
-        sender_name: this.props.user_name,
-        message: this.state.new_message,
+        sender_name: this.props.userName,
+        message: this.state.newMessage,
       },
     ];
 
-    localStorage.setItem("chat_messages_"+this.state.other_user_id, JSON.stringify(chatMessages));
+    localStorage.setItem("chat_messages_"+this.state.otherUserId, JSON.stringify(chatMessages));
 
     this.onStateChange({
       redirect: true,
-      chat_messages: chatMessages,
-      new_message: "",
+      chatMessages: chatMessages,
+      newMessage: "",
     });
   }
 
@@ -52,37 +53,40 @@ class ChatDetail extends Component {
     let message = e.target.value;
 
     this.onStateChange({
-      new_message: message,
+      newMessage: message,
     });
   }
 
    componentDidMount() {
-    let otherUserId = this.props.other_user_id
-      ? this.props.other_user_id
-      : localStorage.getItem("other_user_id");
+    let otherUserId = this.props.otherUserId ? this.props.otherUserId : localStorage.getItem("other_user_id");
     let header = { access_token: this.props.accessToken };
-    let result = APICallGET(URL_FOR_CHAT_MESSAGES+'?chat_type=0&user_id='+otherUserId,header);
 
-    let messages = localStorage.getItem("chat_messages_"+otherUserId)
-      ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId))
-      : result.responseData.messages;
+    new Promise((resolve)=>{
+      resolve(APICallGET(URL_FOR_CHAT_MESSAGES+'?chat_type=0&user_id='+otherUserId,header))
+    }).then((result)=>{
+    
+    let messages = localStorage.getItem("chat_messages_"+otherUserId) ? JSON.parse(localStorage.getItem("chat_messages_"+otherUserId)): result.responseData.messages;
 
     localStorage.setItem("chat_messages_"+otherUserId, JSON.stringify(messages));
-     return this.onStateChange({ chat_messages: messages ,other_user_id:otherUserId});
+     return this.onStateChange({ chatMessages: messages ,otherUserId:otherUserId});
+    }).catch((err)=>{
+      alert('Something went wrong!!!')
+    })
   }
 
   render() {
-    let messages =this.state.chat_messages;
+    let messages =this.state.chatMessages;
+  
     return (
       <div>
-        <ChatComponent user_name={this.props.other_user_name} user_id={this.props.user_id} redirect={false}/>
-        <RedirectPage />
+        <ChatComponent userName={this.props.otherUserName} userId={this.props.userId} redirect={false} setStateChange={this.props.setStateChange}/>
+        <RedirectPage path='/chat'/>
         {messages.map((user) => {
           return (
-            <ChatMessage key={user.message_id} sender_name={user.sender_name} message={user.message} />
+            <ChatMessage key={user.message_id} senderName={user.sender_name} message={user.message} />
           );
         })}
-        <input type="text" name="message" value={this.state.new_message} onChange={this.onChangeHandler}/>
+        <input type="text" name="message" value={this.state.newMessage} onChange={this.onChangeHandler}/>
         <button type="submit" onClick={this.onSubmitHandler}>SEND</button>
       </div>
     );

@@ -12,7 +12,9 @@ import {API_END_POINT} from './constant'
     return new Promise((resolve)=>{
       resolve(fetch(url, inputData));
     })
-    .then((response) => response.json())
+    .then((response) =>  {
+      return response.json()
+    })
     .then((data) => {
       return data;
     })

@@ -9,36 +9,37 @@ class App extends Component {
     super(props);
 
     this.state = {
-      user_id: 0,
-      access_token: "",
-      other_user_id: 0,
-      other_user_name: "",
-      user_name: "",
-      search_text: "",
+      userId: 0,
+      accessToken: "",
+      otherUserId: 0,
+      otherUserName: "",
+      userName: "",
+      searchText: "",
     };
     this.setStateChange = this.setStateChange.bind(this);
   }
 
   setStateChange(data) {
-    this.setState(data);
+    return this.setState(data);
   }
+
   render() {
+  
     return (
       <div>
-        <BrowserRouter>
-       
+        <BrowserRouter>     
           <Routes>
             <Route exact path="/" element={<SignIn setStateChange={this.setStateChange} />}/>
             <Route exact path="/chat" element={ 
-              <ChatList setStateChange={this.setStateChange} accessToken={this.state.access_token}/>
+              <ChatList setStateChange={this.setStateChange} accessToken={this.state.accessToken} user_id={this.state.userId}/>
             }/>
             <Route path="/chatDetail" exact={true} element={
-              <ChatDetail accessToken={ this.state.access_token} user_name={ this.state.user_name} other_user_name={ this.state.other_user_name}
-                other_user_id={this.state.other_user_id} user_id={this.state.user_id} setStateChange={this.setStateChange}
+              <ChatDetail accessToken={ this.state.accessToken} userName={ this.state.userName} otherUserName={ this.state.otherUserName}
+                otherUserId={this.state.otherUserId} userId={this.state.userId} setStateChange={this.setStateChange}
               />
             }/>
             <Route path="/search" element={
-              <SearchList searchText={this.state.search_text} userId={this.state.user_id}/>
+              <SearchList searchText={this.state.searchText} userId={this.state.userId} setStateChange={this.setStateChange}/>
             }/>
           </Routes>
         </BrowserRouter>

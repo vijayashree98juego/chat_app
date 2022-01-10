@@ -12,8 +12,6 @@ class SignIn extends Component {
       password: "",
       redirect: false,
       errors: "",
-      is_pop_up: false,
-      pop_up_message: "",
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -55,25 +53,29 @@ class SignIn extends Component {
 
     if (Object.entries(errors).length === 0) {
       const data = "type=2&email=" +this.state.username +"&password=" +this.state.password;
-      let result =  APICallPOST(URL_FOR_SIGN_IN, data);
-      console.log("result from bbb")
-       console.log(result)
-      if (result.responseCode === 200) {
-        localStorage.setItem("access_token", result.responseData.access_token);
-        localStorage.setItem("user_name", result.responseData.user_name);
-        localStorage.setItem("user_id", result.responseData.user_id);
-  
-        this.props.setStateChange({
-          access_token: result.responseData.access_token,
-          user_name: result.responseData.user_name,
-          user_id: result.responseData.user_id,
-        });
-        this.onStateChange({
-          redirect: true,
-        });
-      } else {
-        alert("Incorrect username or password");
-      }
+      new Promise((resolve)=>{
+        resolve(APICallPOST(URL_FOR_SIGN_IN, data));
+      })
+      .then((result)=>{
+        if (result.responseCode === 200) {
+            localStorage.setItem("access_token", result.responseData.access_token);
+            localStorage.setItem("user_name", result.responseData.user_name);
+            localStorage.setItem("user_id", result.responseData.user_id);
+
+            this.props.setStateChange({
+              accessToken: result.responseData.access_token,
+              userName: result.responseData.user_name,
+              userId: result.responseData.user_id,
+            });
+            this.onStateChange({
+              redirect: true,
+            });
+          } else {
+            alert("Incorrect username or password");
+          }
+      }).catch((err)=>{
+        alert('Something went wrong!!!')
+      })
     } else {
       this.onStateChange({
         errors: errors,

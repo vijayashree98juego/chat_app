@@ -5,7 +5,7 @@ class ChatMessage extends Component {
   render() {
     return (
       <div className="container">
-        <label>{this.props.sender_name}:</label>
+        <label>{this.props.senderName}:</label>
         <p>{this.props.message}</p>
       </div>
     );
